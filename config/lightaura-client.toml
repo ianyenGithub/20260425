@@ -1,0 +1,37 @@
+enablePlayerLighting = true
+#Range: 1 ~ 20
+updateFrequency = 1
+#Range: 1 ~ 15
+defaultLightLevel = 14
+#Range: 1 ~ 100
+cleanupDelay = 3
+
+[vegetationProtection]
+	preserveVegetation = true
+	enhancedTallGrassDetection = true
+	preventPlantDestruction = true
+
+[playerLighting]
+	enablePlayerLightingOffsets = true
+	#Range: 1 ~ 10
+	persistentLightDurationMultiplier = 2
+	enableSmoothTransitions = true
+	enhancedOffhandLighting = true
+	enhancedMainhandLighting = true
+
+[droppedItemLighting]
+	enableDroppedItemLighting = true
+	#Range: 4 ~ 64
+	droppedItemScanRadius = 16
+	#Range: 0.1 ~ 2.0
+	droppedItemLightMultiplier = 1.0
+	#Range: 10 ~ 200
+	maxTrackedEntities = 50
+
+[performance]
+	optimizeLightUpdates = true
+	#Range: 8 ~ 128
+	lightUpdateDistanceCheck = 32
+
+[customLightItems]
+	lightItems = []

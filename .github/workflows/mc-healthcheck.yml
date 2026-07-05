@@ -2,11 +2,9 @@ name: Minecraft Server Health Check
 
 on:
   schedule:
-    # 每 10 分鐘自動執行一次
     - cron: '*/10 * * * *'
-  workflow_dispatch: # 允許手動點擊執行
+  workflow_dispatch:
 
-# 賦予工作流修改 README 檔案並推送的權限
 permissions:
   contents: write
 
@@ -17,34 +15,20 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install mcstatus
-        run: pip install mcstatus
-
       - name: Check Minecraft Server Status
-        # 移除任何阻斷，改用一個小技巧，讓 ping 失敗時也能記錄結果，且不中斷後續的步驟
-        id: check_status
+        # 使用 Linux 內建的 nc 檢測 25565 埠口，連線超時設定為 5 秒
         run: |
-          if python -m mcstatus mcnihaoamiao.ddns.net ping; then
-            echo "status=passing" >> $GITHUB_OUTPUT
+          if nc -z -w 5 mcnihaoamiao.ddns.net 25565; then
+            echo "伺服器在線"
           else
-            echo "status=failing" >> $GITHUB_OUTPUT
-            # 這裡故意讓這個步驟失敗，維持 GitHub 徽章的紅綠燈功能
+            echo "伺服器離線"
             exit 1
           fi
 
       - name: Update Last Check Time in README
         if: ${{ always() }} 
         run: |
-          # 【修正 1】強制使用台北時區 (+8 小時) 輸出時間
           CURRENT_TIME=$(TZ="Asia/Taipei" date +"%Y-%m-%d %H:%M:%S (CST)")
-          echo "最新檢測時間: $CURRENT_TIME"
-          
-          # 使用 sed 取代 README.md 標記中間的文字
           sed -i "s|<!-- LAST_UPDATE_START -->.*<!-- LAST_UPDATE_END -->|<!-- LAST_UPDATE_START -->\`$CURRENT_TIME\`<!-- LAST_UPDATE_END -->|g" README.md
 
       - name: Commit and Push Changes
@@ -53,5 +37,4 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
-          # 檢查是否有檔案變更，有才 commit，避免重複 push 報錯
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: 系統自動更新伺服器檢測時間 [skip ci]" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: 自動更新檢測時間 [skip ci]" && git push)

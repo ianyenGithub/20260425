@@ -6,10 +6,17 @@ on:
     - cron: '*/10 * * * *'
   workflow_dispatch: # 允許手動點擊執行
 
+# 賦予工作流修改 README 檔案並推送的權限
+permissions:
+  contents: write
+
 jobs:
   ping-server:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -20,5 +27,24 @@ jobs:
 
       - name: Check Minecraft Server Status
         run: |
-          # 如果 ping 失敗，GitHub Actions 就會判定此任務失敗，並自動觸發 GitHub 的 Email 通知
           python -m mcstatus mcnihaoamiao.ddns.net ping
+
+      - name: Update Last Check Time in README
+        #不論 ping 成功或失敗，都更新時間 (always)
+        if: ${{ always() }} 
+        run: |
+          # 獲取當前的 UTC 時間
+          CURRENT_TIME=$(date -u +"%Y-%m-%d %H:%M:%S (UTC)")
+          echo "最新檢測時間: $CURRENT_TIME"
+          
+          # 使用 sed 取代 README.md 標記中間的文字
+          sed -i "s|<!-- LAST_UPDATE_START -->.*<!-- LAST_UPDATE_END -->|<!-- LAST_UPDATE_START -->\`$CURRENT_TIME\`<!-- LAST_UPDATE_END -->|g" README.md
+
+      - name: Commit and Push Changes
+        if: ${{ always() }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          # 檢查是否有檔案變更，有才 commit，避免重複 push 報錯
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: 系統自動更新伺服器檢測時間 [skip ci]" && git push)

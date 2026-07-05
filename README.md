@@ -1,5 +1,3 @@
 # Minecraft Server Status
 
-![Server Status](https://github.com/ianyenGithub/20260425/actions/workflows/mc-healthcheck.yml/badge.svg)
-
-![MC Server](https://img.shields.io/badge/Server-mcnihaoamiao.ddns.net-blue?logo=minecraft)
+[![Minecraft Server](https://img.shields.io/github/actions/workflow/status/ianyenGithub/20260425/mc-healthcheck.yml?label=mcnihaoamiao.ddns.net&failed_label=offline&status_label=online&color=brightgreen&failed_color=red)](https://github.com/ianyenGithub/20260425/actions)

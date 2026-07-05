@@ -26,15 +26,22 @@ jobs:
         run: pip install mcstatus
 
       - name: Check Minecraft Server Status
+        # 移除任何阻斷，改用一個小技巧，讓 ping 失敗時也能記錄結果，且不中斷後續的步驟
+        id: check_status
         run: |
-          python -m mcstatus mcnihaoamiao.ddns.net ping
+          if python -m mcstatus mcnihaoamiao.ddns.net ping; then
+            echo "status=passing" >> $GITHUB_OUTPUT
+          else
+            echo "status=failing" >> $GITHUB_OUTPUT
+            # 這裡故意讓這個步驟失敗，維持 GitHub 徽章的紅綠燈功能
+            exit 1
+          fi
 
       - name: Update Last Check Time in README
-        #不論 ping 成功或失敗，都更新時間 (always)
         if: ${{ always() }} 
         run: |
-          # 獲取當前的 UTC 時間
-          CURRENT_TIME=$(date -u +"%Y-%m-%d %H:%M:%S (UTC)")
+          # 【修正 1】強制使用台北時區 (+8 小時) 輸出時間
+          CURRENT_TIME=$(TZ="Asia/Taipei" date +"%Y-%m-%d %H:%M:%S (CST)")
           echo "最新檢測時間: $CURRENT_TIME"
           
           # 使用 sed 取代 README.md 標記中間的文字

@@ -1,5 +1,4 @@
 ### 🌐 Minecraft Server Status
 
 * **連線網址**: `mcnihaoamiao.ddns.net`
-* **即時狀態**: [![Minecraft Server](https://img.shields.io/github/actions/workflow/status/ianyenGithub/20260425/mc-healthcheck.yml?label=Status)](https://github.com/ianyenGithub/20260425/actions)
-* **最後更新時間**: <!-- LAST_UPDATE_START -->`2026-07-05 18:49:52 (CST)`<!-- LAST_UPDATE_END -->
+* **即時狀態**: ![Server Status](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.mcsrvstat.us%2F2%2Fmcnihaoamiao.ddns.net&query=%24.online&label=mcnihaoamiao.ddns.net&success_color=brightgreen&failure_color=red)

@@ -1,0 +1,28 @@
+name: Minecraft Server Health Check
+
+on:
+  schedule:
+    # 每 10 分鐘自動執行一次 (可以依需求調整 Cron 運算式)
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # 允許手動點擊執行
+
+jobs:
+  ping-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-packages: 'mcstatus'
+
+      - name: Check Minecraft Server Status
+        run: |
+          # 使用 mcstatus 模組來 ping 你的 DDNS 網址
+          # 預設為 Java 版 25565 埠，如果是 Bedrock 版請改用: python -m mcstatus mcnihaoamiao.ddns.net bedrock
+          python -m mcstatus mcnihaoamiao.ddns.net ping
+        
+      - name: Action on Failure
+        if: ${{ failure() }}
+        run: |
+          echo "伺服器好像掛掉了！mcnihaoamiao.ddns.net 無法連線。"
+          # 你可以在這裡加入發送 Discord Webhook 或 Email 的指令
